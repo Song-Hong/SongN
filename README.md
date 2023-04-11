@@ -3,7 +3,7 @@
 	<p><b>SongN<b></p>
 </div>
 
-# SongN - For Unity Monobehaver and UGUI
+# SongN - For Unity MonoBehaviour and UGUI
 
 <hr/>
 <a href="#tools">>> Tools</a>
