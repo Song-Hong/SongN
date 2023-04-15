@@ -83,6 +83,62 @@ namespace Song.Runtime.Support
             }
             return true;
         }
+
+        /// <summary>
+        /// 存储Excel
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <param name="data">Excel 工作表数据</param>
+        /// <param name="IsCreate">为空创建</param>
+        /// <param name="IsCover">是否覆盖</param>
+        public static bool Save(string filePath, Dictionary<string, List<List<string>>> data, bool IsCover = true,
+            bool IsCreate = true)
+        {
+            if (!filePath.Contains(".xlsx")) filePath += ".xlsx";
+            if (!IsCreate && !File.Exists(filePath)) return false;
+            if (!IsCover && File.Exists(filePath)) return false;
+            FileInfo excelName = new FileInfo(filePath);
+            if (excelName.Exists)
+            {
+                excelName.Delete();
+                excelName = new FileInfo(filePath);
+            }
+
+            using (ExcelPackage package = new ExcelPackage(excelName))
+            {
+                foreach (var sheetData in data)
+                {
+                    ExcelWorksheet worksheet;
+                    if (!IsCreate)
+                    {
+                        worksheet = package.Workbook.Worksheets[sheetData.Key];
+                        if (worksheet == null)
+                        {
+                            worksheet = package.Workbook.Worksheets.Add(sheetData.Key);
+                        }
+                    }
+                    else
+                    {
+                        worksheet = package.Workbook.Worksheets.Add(sheetData.Key);
+                    }
+
+                    int rowIndex = 1;
+                    foreach (var rowData in sheetData.Value)
+                    {
+                        int colIndex = 1;
+                        foreach (var cellData in rowData)
+                        {
+                            worksheet.Cells[rowIndex, colIndex].Value = cellData;
+                            colIndex++;
+                        }
+                        rowIndex++;
+                    }
+                }
+                package.Save();
+                return true;
+            }
+        }
+
         #endregion
 
         #region 读取
@@ -155,6 +211,7 @@ namespace Song.Runtime.Support
             return datas;
         }
 
+
         /// <summary>
         /// DataSet转Dictionary<string,string[,]>
         /// </summary>
@@ -190,8 +247,46 @@ namespace Song.Runtime.Support
 
             return dictionary;
         }
+        
+        /// <summary>
+        /// DataSet转Dictionary<string, List<List<string>>>
+        /// </summary>
+        /// <param name="result">DataSet</param>
+        /// <returns>Dictionary<string, List<List<string>>></returns>
+        public static Dictionary<string, List<List<string>>> DataSet2DictionaryListList(DataSet result)
+        {
+            var dictionary = new Dictionary<string, List<List<string>>>();
 
+            if (result != null && result.Tables != null)
+            {
+                foreach (DataTable table in result.Tables)
+                {
+                    if (table != null && table.Rows != null && table.Columns != null)
+                    {
+                        var data = new List<List<string>>();
+                        for (var i = 0; i < table.Rows.Count; i++)
+                        {
+                            var row = table.Rows[i];
+                            var rowData = new List<string>();
+                            for (var j = 0; j < table.Columns.Count; j++)
+                            {
+                                rowData.Add(row[j].ToString());
+                            }
+                            data.Add(rowData);
+                        }
+                        dictionary.Add(table.TableName, data);
+                    }
+                    else
+                    {
+                        dictionary.Add(table.TableName, new List<List<string>>());
+                    }
+                }
+            }
 
+            return dictionary;
+        }
+
+        
         /// <summary>
         /// DataSet转ExcelData
         /// </summary>

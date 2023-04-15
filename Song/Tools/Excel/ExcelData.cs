@@ -14,6 +14,28 @@ namespace Song.Runtime.Support
         private Dictionary<string, SheetData> Datas = new Dictionary<string, SheetData>();
 
         /// <summary>
+        /// Keys 值
+        /// </summary>
+        public Dictionary<string,SheetData>.KeyCollection Keys => Datas.Keys;
+
+        /// <summary>
+        /// 快速存取值
+        /// </summary>
+        /// <param name="sheetName">表名</param>
+        public SheetData this[string sheetName]
+        {
+            get
+            {
+                var sheetData = new SheetData();
+                if (Datas.TryGetValue(sheetName, out var data))
+                {
+                    sheetData = data;
+                }
+                return sheetData;
+            }
+        }
+        
+        /// <summary>
         /// 添加表
         /// </summary>
         /// <param name="sheet"></param>
