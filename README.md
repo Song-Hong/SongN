@@ -1,5 +1,5 @@
 <div align=center>
-  <img src="Song/Img/Sn.png"></img>
+  <img src="Song/Editor/Img/Sn.png"></img>
 	<p><b>SongN<b></p>
 </div>
 
