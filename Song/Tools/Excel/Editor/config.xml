@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<SongNPlugin>
-    <PName>Excel Support</PName>
-    <Version>0.00.01</Version>
-    <Logo>./Img/SongExcel.png</Logo>
-    <Author>Song</Author>
-    <License>MIT</License>
-    <Setting>Song.Tools.Excel.ExcelViewSetting</Setting>
-</SongNPlugin>

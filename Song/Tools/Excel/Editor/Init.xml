@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<SongExcel>
-    <Command>
-        pip uninstall googletrans
-        pip install googletrans==4.0.0-rc1
-    </Command>
-</SongExcel>
