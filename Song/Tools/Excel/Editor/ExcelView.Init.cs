@@ -109,7 +109,7 @@ namespace Song.Tools.Excel
             GUILayout.EndArea();
 
             //显示表格
-            GUILayout.BeginArea(new Rect(10, 36, Screen.width, Screen.height - 98));
+            GUILayout.BeginArea(new Rect(10, 36, Screen.width-20, Screen.height - 98));
             if (!string.IsNullOrWhiteSpace(_sheetName))
             {
                 ShowSheet(_excelData[_sheetName]);
@@ -163,9 +163,9 @@ namespace Song.Tools.Excel
         //初始化文件
         private static void InitFile()
         {
-            _sai = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Img/SAI.png");
-            _save = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Img/Save.png");
-            _saveAs = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Img/SaveAs.png");
+            _sai = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Editor/Img/SAI.png");
+            _save = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Editor/Img/Save.png");
+            _saveAs = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Editor/Img/SaveAs.png");
         }
         
         //初始化样式
@@ -191,6 +191,16 @@ namespace Song.Tools.Excel
                     textColor = Color.white // 字体颜色为黑色
                 },
                 alignment = TextAnchor.MiddleCenter
+            };
+
+            _selectSheetBg = new GUIStyle()
+            {
+                normal =
+                {
+                    background = MakeTex(new Color(0.368f, 0.607f, 0.704f)),
+                    textColor = Color.white,
+                },
+                margin = new RectOffset(3,3,4,0)
             };
         }
 
