@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,8 +18,6 @@ namespace Song.Editor.Settings
         private static Texture2D _tag;
         private static Texture2D _plugin;
         private static Texture2D _popup;
-
-        private static Texture2D test;
         
         [MenuItem("Song/Setting")]
         public static void ShowSetting()
@@ -28,20 +28,13 @@ namespace Song.Editor.Settings
             
             LoadImg();
             InitStyle();
+            InitTools();
             
             wnd.Show();
         }
 
         private static void InitStyle()
         {
-            // Texture2D SetTex(Color color)
-            // {
-            //     var tex = new Texture2D(1, 1);
-            //     tex.SetPixel(1,1,color);
-            //     tex.Apply();
-            //     return tex;
-            // }
-
             _localizationBg = new GUIStyle()
             {
                 normal =
@@ -106,12 +99,37 @@ namespace Song.Editor.Settings
             _tag          = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Editor/Img/Tag.png");
             _plugin       = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Editor/Img/Plugin.png");
             _searchBg     = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/song/Editor/Img/SearchBG.png");
-            _popup         = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/song/Editor/Img/Popup.png");
-
-            test = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Song/Tools/Excel/Editor/Img/SongExcel.png");
+            _popup        = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/song/Editor/Img/Popup.png");
         }
-        
-        void OnGUI () {
+
+        /// <summary>
+        /// 初始化工具
+        /// </summary>
+        private static void InitTools()
+        {
+            _tools = new List<Tuple<string, string, Texture, string, string, string>>();
+            foreach (var directory in Directory.GetDirectories("Assets/Song/Tools"))
+            {
+                var editorConfigXML = directory + "/Editor/config.xml";
+                if (!File.Exists(editorConfigXML)) continue;
+                
+                var doc = new XmlDocument();
+                doc.Load(editorConfigXML);
+                var root = doc.SelectSingleNode("SongNPlugin");
+                if (root != null)
+                    _tools.Add(new Tuple<string, string, Texture, string, string, string>(
+                        root.SelectSingleNode("PName")?.InnerText,
+                        root.SelectSingleNode("Version")?.InnerText,
+                        AssetDatabase.LoadAssetAtPath<Texture2D>(root.SelectSingleNode("Logo")?.InnerText),
+                        root.SelectSingleNode("Author")?.InnerText,
+                        root.SelectSingleNode("License")?.InnerText,
+                        root.SelectSingleNode("Setting")?.InnerText
+                    ));
+            }
+        }
+
+        private void OnGUI () 
+        {
             Logo();
             Localization();
             Version();

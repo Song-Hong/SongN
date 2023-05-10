@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -25,7 +26,17 @@ namespace Song.Editor.Settings
         private string _searchInfo;
         
         private string[] _options = { "中文(简体)", "中文(繁体)", "English"};
-        private string[] _tags    = { "Song","Other"};
+        private List<string> _tags = new List<string>();
+        
+        /// <summary>
+        /// 配置文件设置信息
+        /// </summary>
+        private static List<Tuple<string, string, Texture, string, string, string>> _tools;
+
+        /// <summary>
+        /// 当前筛选的标签
+        /// </summary>
+        private string nowSelectTag = "";
         
         private void Logo()
         {
@@ -84,7 +95,7 @@ namespace Song.Editor.Settings
             {
                 if (GUILayout.Button(tag,_tagsBtn,GUILayout.Width(42),GUILayout.Height(20)))
                 {
-                    
+                    nowSelectTag = tag;
                 }
             }
             GUILayout.EndHorizontal();
@@ -94,18 +105,54 @@ namespace Song.Editor.Settings
 
         private void Plugins()
         {
-            GUILayout.BeginArea(new Rect(34,176,Screen.width-34,Screen.height-176));
-            _pluginsPosition = GUILayout.BeginScrollView(_pluginsPosition,GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+            GUILayout.BeginArea(new Rect(34, 176, Screen.width - 34, Screen.height - 176));
+            _pluginsPosition = GUILayout.BeginScrollView(_pluginsPosition, GUILayout.ExpandHeight(true),
+                GUILayout.ExpandWidth(true));
+            
+            var buttonsPerRow = Mathf.FloorToInt((Screen.width - 34) / 70f)-2;
+            var buttonIndex = 0;
 
-            GUILayout.BeginVertical();
-            if (GUILayout.Button(new GUIContent(test), _pluginBtn,GUILayout.Width(64),GUILayout.Height(64)))
+            var startindex = 0;
+            var endindex = 0;
+            
+            foreach (var tuple in _tools)
             {
-                Debug.Log(1);
-            }
-            GUILayout.Label("SongExcel");
-            GUILayout.EndVertical();
+                if (buttonIndex == 0)
+                {
+                    GUILayout.BeginHorizontal();
+                    startindex++;
+                }
 
-            GUILayout.FlexibleSpace();
+                if (!string.IsNullOrWhiteSpace(nowSelectTag) && nowSelectTag != tuple.Item4) continue;
+                GUILayout.BeginVertical();
+                if (GUILayout.Button(new GUIContent(tuple.Item3), _pluginBtn, GUILayout.Width(64),
+                        GUILayout.Height(64)))
+                {
+                    if (string.IsNullOrWhiteSpace(tuple.Item6)) return;
+                    var type = Type.GetType(tuple.Item6);
+                    var instance = ScriptableObject.CreateInstance(type);
+                    var method = type.GetMethod("Setting");
+                    method.Invoke(instance, null);
+        
+                }
+                GUILayout.Label(tuple.Item1);
+                GUILayout.Space(6);
+                GUILayout.EndVertical();
+
+                buttonIndex++;
+                if (buttonIndex <= buttonsPerRow) continue;
+                buttonIndex = 0;
+                endindex++;
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
+
+            if (endindex < startindex)
+            {
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
+
             GUILayout.EndScrollView();
             GUILayout.EndArea();
         }

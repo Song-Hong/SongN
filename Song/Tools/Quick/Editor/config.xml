@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SongNPlugin>
+    <PName>SongQuick</PName>
+    <Version>0.00.2</Version>
+    <Logo>Assets/Song/Tools/Quick/Editor/img/Quick.png</Logo>
+    <Author>Song</Author>
+    <License>MIT</License>
+    <Setting></Setting>
+</SongNPlugin>
